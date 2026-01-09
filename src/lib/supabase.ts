@@ -10,11 +10,14 @@ export interface Artifact {
   slug: string
   title: string
   description: string | null
-  jsx_code: string
+  jsx_code: string | null
+  embed_url: string | null
   category: string
   tags: string[]
   featured: boolean
   display_order: number
+  artifact_type: 'standalone' | 'slideshow' | 'visualization' | 'companion'
+  parent_id: string | null
   created_at: string
   updated_at: string
 }
