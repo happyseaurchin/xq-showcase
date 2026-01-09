@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Fold Spiral: Single Line Generating Nested Tori</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #000;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        #canvas {
+            display: block;
+            cursor: grab;
+        }
+        
+        #canvas:active {
+            cursor: grabbing;
+        }
+        
+        .ui-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(136, 204, 255, 0.3);
+            max-width: 320px;
+            z-index: 100;
+        }
+        
+        h1 {
+            color: #88ccff;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 0.75em;
+            margin-bottom: 15px;
+        }
+        
+        .control-group {
+            margin-bottom: 12px;
+        }
+        
+        label {
+            display: block;
+            color: #88ccff;
+            font-size: 0.8em;
+            margin-bottom: 4px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            accent-color: #88ccff;
+        }
+        
+        .value-display {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: #ffd93d;
+            text-align: right;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+        
+        .checkbox-group input {
+            width: 16px;
+            height: 16px;
+            accent-color: #88ccff;
+        }
+        
+        .mobius-toggle {
+            background: linear-gradient(90deg, rgba(155, 89, 182, 0.3), rgba(255, 107, 107, 0.3));
+            border: 1px solid #9b59b6;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+        }
+        
+        .mobius-toggle label {
+            color: #e0e0e0;
+        }
+        
+        .stats {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 0.75em;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+        }
+        
+        .zoom-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        
+        button {
+            flex: 1;
+            background: linear-gradient(135deg, #4488cc 0%, #2266aa 100%);
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        button:hover {
+            filter: brightness(1.1);
+        }
+        
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(136, 204, 255, 0.3);
+            font-size: 0.8em;
+            max-width: 400px;
+        }
+        
+        .info-panel h3 {
+            color: #88ccff;
+            margin-bottom: 8px;
+        }
+        
+        .spiral-equation {
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        .color-legend {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.75em;
+        }
+        
+        .color-bar {
+            height: 12px;
+            width: 150px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="ui-overlay">
+        <h1>4-Fold Spiral Generator</h1>
+        <p class="subtitle">A single line creating nested tori structure</p>
+        
+        <div class="control-group">
+            <label>Zoom</label>
+            <input type="range" id="zoomSlider" min="-1.5" max="3" step="0.02" value="0">
+            <div class="value-display" id="zoomDisplay">1.0×</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Windings per level (n)</label>
+            <input type="range" id="windingsSlider" min="3" max="64" step="1" value="8">
+            <div class="value-display" id="windingsDisplay">8 windings</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Spiral progress</label>
+            <input type="range" id="progressSlider" min="0" max="1" step="0.001" value="1">
+            <div class="value-display" id="progressDisplay">100%</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Line thickness</label>
+            <input type="range" id="thicknessSlider" min="0.5" max="4" step="0.1" value="1.5">
+        </div>
+        
+        <div class="mobius-toggle">
+            <div class="checkbox-group">
+                <input type="checkbox" id="mobiusToggle">
+                <label for="mobiusToggle">Möbius closure (connect end → start)</label>
+            </div>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="showGhostTori">
+            <label for="showGhostTori">Show ghost tori outlines</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="animateProgress">
+            <label for="animateProgress">Animate spiral drawing</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="autoRotate" checked>
+            <label for="autoRotate">Auto-rotate view</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="highQuality">
+            <label for="highQuality">High quality (no segment limit)</label>
+        </div>
+        
+        <div class="stats">
+            <div class="stats-row"><span>Total windings:</span><span id="totalWindings">-</span></div>
+            <div class="stats-row"><span>Line segments:</span><span id="totalSegments">-</span></div>
+            <div class="stats-row"><span>Orientation cycle:</span><span>4 × 90° = 360°</span></div>
+        </div>
+        
+        <div class="zoom-buttons">
+            <button onclick="zoomToLevel(4)">Full</button>
+            <button onclick="zoomToLevel(3)">L3</button>
+            <button onclick="zoomToLevel(2)">L2</button>
+            <button onclick="zoomToLevel(1)">L1</button>
+            <button onclick="zoomToLevel(0)">Core</button>
+        </div>
+        
+        <div class="color-legend">
+            <span>Progress:</span>
+            <div class="color-bar"></div>
+        </div>
+    </div>
+    
+    <div class="info-panel">
+        <h3>The 4-Fold Spiral</h3>
+        <p>A single continuous line that spirals at 4 nested scales. Each level's "near-circle" becomes the path for the next level's spiral.</p>
+        <div class="spiral-equation">
+Level 1: θ₁ = t<br>
+Level 2: θ₂ = t / n<br>
+Level 3: θ₃ = t / n²<br>
+Level 4: θ₄ = t / n³<br>
+<br>
+After n³ × 2π of t, orientation returns to start.
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // State
+        let zoom = 1;
+        let targetZoom = 1;
+        let rotationX = 0.35;
+        let rotationY = 0;
+        let autoRotate = true;
+        let windingsPerLevel = 8;
+        let progress = 1;
+        let showGhostTori = false;
+        let mobiusClosure = false;
+        let animateProgress = false;
+        let lineThickness = 1.5;
+        let animationDirection = 1;
+        let highQuality = false;
+        
+        // Radii for each level (tube of each = path of next)
+        const R4 = 3.0, r4 = 1.0;    // L4
+        const R3 = 1.0, r3 = 0.33;   // L3 (R3 = r4)
+        const R2 = 0.33, r2 = 0.11;  // L2 (R2 = r3)
+        const R1 = 0.11, r1 = 0.037; // L1 (R1 = r2)
+        const r0 = 0.037;             // L0 circle radius (= r1)
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        
+        // Vector math
+        function vec3(x, y, z) { return { x, y, z }; }
+        function add(a, b) { return vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
+        function scale(v, s) { return vec3(v.x * s, v.y * s, v.z * s); }
+        function normalize(v) {
+            const len = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+            return len > 0 ? scale(v, 1/len) : v;
+        }
+        
+        function rotateForView(p, rx, ry) {
+            let { x, y, z } = p;
+            let cos = Math.cos(rx), sin = Math.sin(rx);
+            let y1 = y * cos - z * sin, z1 = y * sin + z * cos;
+            y = y1; z = z1;
+            cos = Math.cos(ry); sin = Math.sin(ry);
+            let x1 = x * cos + z * sin;
+            z1 = -x * sin + z * cos;
+            return vec3(x1, y1, z1);
+        }
+        
+        function project(point) {
+            const p = rotateForView(point, rotationX, rotationY);
+            const fov = 4;
+            const scl = (canvas.height * 0.12 * zoom) / (fov + p.z * 0.2);
+            return { x: canvas.width / 2 + p.x * scl, y: canvas.height / 2 - p.y * scl, z: p.z };
+        }
+        
+        // Frame operations
+        function createFrame(origin, e1, e2, e3) {
+            return { origin, e1: normalize(e1), e2: normalize(e2), e3: normalize(e3) };
+        }
+        
+        function localToWorld(localPt, frame) {
+            return add(add(add(frame.origin, scale(frame.e1, localPt.x)), scale(frame.e2, localPt.y)), scale(frame.e3, localPt.z));
+        }
+        
+        function identityFrame() {
+            return createFrame(vec3(0, 0, 0), vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 1));
+        }
+        
+        // Get frame at angle u along a torus path in given parent frame
+        function getTorusTubeFrame(R, r, u, parentFrame) {
+            const pathX = R * Math.cos(u);
+            const pathY = R * Math.sin(u);
+            const center = localToWorld(vec3(pathX, pathY, 0), parentFrame);
+            
+            const normalLocal = vec3(Math.cos(u), Math.sin(u), 0);
+            const normal = normalize(add(add(scale(parentFrame.e1, normalLocal.x), scale(parentFrame.e2, normalLocal.y)), scale(parentFrame.e3, 0)));
+            
+            const binormal = parentFrame.e3;
+            
+            const tangentLocal = vec3(-Math.sin(u), Math.cos(u), 0);
+            const tangent = normalize(add(add(scale(parentFrame.e1, tangentLocal.x), scale(parentFrame.e2, tangentLocal.y)), scale(parentFrame.e3, 0)));
+            
+            return createFrame(center, normal, binormal, tangent);
+        }
+        
+        // Generate the 4-fold spiral
+        // t goes from 0 to maxT
+        // At each t, we compute nested angles with slight advances (spirals)
+        function generateSpiral(n, progressFraction) {
+            const points = [];
+            
+            // Total parameter range for one complete 4-fold structure
+            // n windings at L1 per L2 turn, n at L2 per L3 turn, n at L3 per L4 turn
+            // For L4 to complete one turn, we need n³ windings at L1
+            const totalWindings = n * n * n;
+            const maxT = totalWindings * Math.PI * 2;
+            
+            // Number of sample points
+            const maxPoints = highQuality ? 200000 : 50000;
+            const numPoints = Math.min(maxPoints, totalWindings * 60);
+            const actualPoints = Math.floor(numPoints * progressFraction);
+            
+            for (let i = 0; i <= actualPoints; i++) {
+                const t = (i / numPoints) * maxT;
+                
+                // Angles at each level (spiral offset built in)
+                const theta1 = t;                    // Innermost (fastest)
+                const theta2 = t / n;                // 
+                const theta3 = t / (n * n);          //
+                const theta4 = t / (n * n * n);      // Outermost (slowest)
+                
+                // Build the point by composing frames
+                // Start with L4 frame (world)
+                const frame4 = identityFrame();
+                
+                // L4 path position (with spiral - theta4 doesn't complete full circle until end)
+                const frame3 = getTorusTubeFrame(R4, r4, theta4, frame4);
+                
+                // Position in L4's tube (which is L3's path plane)
+                // L3 spiral around this
+                const frame2 = getTorusTubeFrame(R3, r3, theta3, frame3);
+                
+                // L2 spiral
+                const frame1 = getTorusTubeFrame(R2, r2, theta2, frame2);
+                
+                // L1 spiral - final position on the innermost tube circle
+                const localPos = vec3(r1 * Math.cos(theta1), r1 * Math.sin(theta1), 0);
+                const worldPos = localToWorld(localPos, frame1);
+                
+                points.push({ pos: worldPos, t: t / maxT });
+            }
+            
+            return points;
+        }
+        
+        // Generate Möbius closure arc
+        function generateMobiusArc(startPoint, endPoint, numPoints = 100) {
+            const points = [];
+            
+            // Arc through 3D space connecting end to start
+            // Use a curved path that swoops around
+            for (let i = 0; i <= numPoints; i++) {
+                const t = i / numPoints;
+                
+                // Interpolate with a curve that goes "outside" the structure
+                const height = Math.sin(t * Math.PI) * 2; // Arc up and over
+                const twist = t * Math.PI; // Half twist during arc
+                
+                // Lerp position
+                const x = startPoint.x * (1 - t) + endPoint.x * t;
+                const y = startPoint.y * (1 - t) + endPoint.y * t;
+                const z = startPoint.z * (1 - t) + endPoint.z * t + height;
+                
+                // Add some spiral character to the return path
+                const spiralR = Math.sin(t * Math.PI) * 0.5;
+                const spiralAngle = t * Math.PI * 4;
+                
+                points.push({
+                    pos: vec3(
+                        x + spiralR * Math.cos(spiralAngle),
+                        y + spiralR * Math.sin(spiralAngle),
+                        z
+                    ),
+                    t: t
+                });
+            }
+            
+            return points;
+        }
+        
+        // Generate ghost torus outline
+        function generateGhostTorus(R, r, frame, uSegs = 32, vSegs = 16) {
+            const rings = [];
+            for (let i = 0; i <= uSegs; i++) {
+                const u = (i / uSegs) * Math.PI * 2;
+                const ring = [];
+                for (let j = 0; j <= vSegs; j++) {
+                    const v = (j / vSegs) * Math.PI * 2;
+                    const localPt = vec3(
+                        (R + r * Math.cos(v)) * Math.cos(u),
+                        (R + r * Math.cos(v)) * Math.sin(u),
+                        r * Math.sin(v)
+                    );
+                    ring.push(localToWorld(localPt, frame));
+                }
+                rings.push(ring);
+            }
+            return rings;
+        }
+        
+        // Color based on progress through spiral
+        function getColor(t) {
+            // Gradient through levels
+            const colors = [
+                [255, 107, 107],  // Red (L1)
+                [255, 217, 61],   // Yellow (L2)
+                [107, 203, 119],  // Green (L3)
+                [77, 150, 255],   // Blue (L4)
+                [155, 89, 182]    // Purple (return)
+            ];
+            
+            const idx = t * (colors.length - 1);
+            const i = Math.floor(idx);
+            const f = idx - i;
+            
+            if (i >= colors.length - 1) return `rgb(${colors[colors.length - 1].join(',')})`;
+            
+            const c1 = colors[i];
+            const c2 = colors[i + 1];
+            const r = Math.round(c1[0] * (1 - f) + c2[0] * f);
+            const g = Math.round(c1[1] * (1 - f) + c2[1] * f);
+            const b = Math.round(c1[2] * (1 - f) + c2[2] * f);
+            
+            return `rgb(${r},${g},${b})`;
+        }
+        
+        // Draw ghost torus
+        function drawGhostTorus(rings, color, alpha = 0.15) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 0.5;
+            ctx.globalAlpha = alpha;
+            
+            const uStep = Math.max(1, Math.floor(rings.length / 12));
+            for (let i = 0; i < rings.length - 1; i += uStep) {
+                ctx.beginPath();
+                const p0 = project(rings[i][0]);
+                ctx.moveTo(p0.x, p0.y);
+                for (let j = 1; j < rings[i].length; j++) {
+                    const p = project(rings[i][j]);
+                    ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+            }
+            
+            const vStep = Math.max(1, Math.floor(rings[0].length / 8));
+            for (let j = 0; j < rings[0].length - 1; j += vStep) {
+                ctx.beginPath();
+                const p0 = project(rings[0][j]);
+                ctx.moveTo(p0.x, p0.y);
+                for (let i = 1; i < rings.length; i++) {
+                    const p = project(rings[i][j]);
+                    ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        // Main render
+        function render() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Generate spiral
+            const spiral = generateSpiral(windingsPerLevel, progress);
+            
+            // Draw ghost tori if enabled
+            if (showGhostTori) {
+                const frame4 = identityFrame();
+                const ghost4 = generateGhostTorus(R4, r4, frame4);
+                drawGhostTorus(ghost4, '#9b59b6', 0.12);
+                
+                if (zoom > 0.8) {
+                    const frame3 = getTorusTubeFrame(R4, r4, 0, frame4);
+                    const ghost3 = generateGhostTorus(R3, r3, frame3);
+                    drawGhostTorus(ghost3, '#4d96ff', 0.15);
+                }
+                
+                if (zoom > 2) {
+                    const frame3 = getTorusTubeFrame(R4, r4, 0, frame4);
+                    const frame2 = getTorusTubeFrame(R3, r3, 0, frame3);
+                    const ghost2 = generateGhostTorus(R2, r2, frame2);
+                    drawGhostTorus(ghost2, '#6bcb77', 0.18);
+                }
+                
+                if (zoom > 6) {
+                    const frame3 = getTorusTubeFrame(R4, r4, 0, frame4);
+                    const frame2 = getTorusTubeFrame(R3, r3, 0, frame3);
+                    const frame1 = getTorusTubeFrame(R2, r2, 0, frame2);
+                    const ghost1 = generateGhostTorus(R1, r1, frame1);
+                    drawGhostTorus(ghost1, '#ffd93d', 0.2);
+                }
+            }
+            
+            // Draw spiral with color gradient
+            if (spiral.length > 1) {
+                const maxDrawCalls = highQuality ? spiral.length : 5000;
+                const segmentSize = Math.max(1, Math.floor(spiral.length / maxDrawCalls));
+                
+                for (let i = 0; i < spiral.length - segmentSize; i += segmentSize) {
+                    const p1 = project(spiral[i].pos);
+                    const p2 = project(spiral[Math.min(i + segmentSize, spiral.length - 1)].pos);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = getColor(spiral[i].t);
+                    ctx.lineWidth = lineThickness * Math.min(zoom, 2);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw Möbius closure arc if enabled
+            if (mobiusClosure && spiral.length > 1 && progress > 0.99) {
+                const endPoint = spiral[spiral.length - 1].pos;
+                const startPoint = spiral[0].pos;
+                const arc = generateMobiusArc(endPoint, startPoint);
+                
+                for (let i = 0; i < arc.length - 1; i++) {
+                    const p1 = project(arc[i].pos);
+                    const p2 = project(arc[i + 1].pos);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    
+                    // Purple gradient for return arc
+                    const t = arc[i].t;
+                    const r = Math.round(155 + t * 100);
+                    const g = Math.round(89 - t * 30);
+                    const b = Math.round(182 - t * 80);
+                    ctx.strokeStyle = `rgb(${r},${g},${b})`;
+                    ctx.lineWidth = lineThickness * 1.5 * Math.min(zoom, 2);
+                    ctx.globalAlpha = 0.8;
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+                
+                // Draw infinity symbol at connection point
+                const midArc = arc[Math.floor(arc.length / 2)];
+                const pMid = project(midArc.pos);
+                ctx.fillStyle = '#fff';
+                ctx.font = '20px serif';
+                ctx.fillText('∞', pMid.x - 8, pMid.y + 6);
+            }
+            
+            // Update stats
+            const totalWindings = windingsPerLevel * windingsPerLevel * windingsPerLevel;
+            document.getElementById('totalWindings').textContent = totalWindings;
+            document.getElementById('totalSegments').textContent = spiral.length.toLocaleString();
+        }
+        
+        // Animation loop
+        function animate() {
+            zoom += (targetZoom - zoom) * 0.08;
+            
+            if (autoRotate) {
+                rotationY += 0.003;
+            }
+            
+            if (animateProgress) {
+                progress += 0.002 * animationDirection;
+                if (progress >= 1) {
+                    progress = 1;
+                    animationDirection = -1;
+                } else if (progress <= 0) {
+                    progress = 0;
+                    animationDirection = 1;
+                }
+                document.getElementById('progressSlider').value = progress;
+                document.getElementById('progressDisplay').textContent = (progress * 100).toFixed(0) + '%';
+            }
+            
+            render();
+            
+            document.getElementById('zoomDisplay').textContent = zoom.toFixed(1) + '×';
+            document.getElementById('zoomSlider').value = Math.log10(zoom);
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function zoomToLevel(level) {
+            const zooms = [25, 8, 3, 1.2, 0.5];
+            targetZoom = zooms[level];
+        }
+        window.zoomToLevel = zoomToLevel;
+        
+        // Event listeners
+        document.getElementById('zoomSlider').addEventListener('input', (e) => {
+            targetZoom = Math.pow(10, parseFloat(e.target.value));
+        });
+        
+        document.getElementById('windingsSlider').addEventListener('input', (e) => {
+            windingsPerLevel = parseInt(e.target.value);
+            document.getElementById('windingsDisplay').textContent = windingsPerLevel + ' windings';
+        });
+        
+        document.getElementById('progressSlider').addEventListener('input', (e) => {
+            progress = parseFloat(e.target.value);
+            document.getElementById('progressDisplay').textContent = (progress * 100).toFixed(0) + '%';
+        });
+        
+        document.getElementById('thicknessSlider').addEventListener('input', (e) => {
+            lineThickness = parseFloat(e.target.value);
+        });
+        
+        document.getElementById('mobiusToggle').addEventListener('change', (e) => {
+            mobiusClosure = e.target.checked;
+        });
+        
+        document.getElementById('showGhostTori').addEventListener('change', (e) => {
+            showGhostTori = e.target.checked;
+        });
+        
+        document.getElementById('animateProgress').addEventListener('change', (e) => {
+            animateProgress = e.target.checked;
+            animationDirection = 1;
+        });
+        
+        document.getElementById('autoRotate').addEventListener('change', (e) => {
+            autoRotate = e.target.checked;
+        });
+        
+        document.getElementById('highQuality').addEventListener('change', (e) => {
+            highQuality = e.target.checked;
+        });
+        
+        // Mouse controls
+        let isDragging = false;
+        let lastX, lastY;
+        
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                rotationY += (e.clientX - lastX) * 0.005;
+                rotationX += (e.clientY - lastY) * 0.005;
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+        
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = e.deltaY > 0 ? 0.9 : 1.1;
+            targetZoom = Math.max(0.2, Math.min(50, targetZoom * factor));
+        });
+        
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            }
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 1 && isDragging) {
+                rotationY += (e.touches[0].clientX - lastX) * 0.005;
+                rotationX += (e.touches[0].clientY - lastY) * 0.005;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            }
+        });
+        
+        canvas.addEventListener('touchend', () => isDragging = false);
+        
+        // Start
+        animate();
+    </script>
+</body>
+</html>
