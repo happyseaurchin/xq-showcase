@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function TorusQMomentSlides() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -725,6 +726,14 @@ export default function TorusQMomentSlides() {
   
   return (
     <div className="min-h-screen bg-gray-900 p-4 flex flex-col">
+      {/* Home button */}
+      <Link
+        to="/"
+        className="absolute top-4 left-4 px-4 py-2 bg-gray-800 border border-gray-600 text-gray-400 rounded-lg text-sm hover:border-purple-500 hover:text-purple-300 transition-all z-10"
+      >
+        ← XQ Gallery
+      </Link>
+      
       <h1 className="text-xl font-bold text-white text-center mb-2">
         Torus Geometry & Q-Moment Emergence
       </h1>
