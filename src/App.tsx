@@ -6,6 +6,11 @@ import { supabase, Artifact } from './lib/supabase'
 import RiemannDynamics from './pages/RiemannDynamics'
 import RiemannPurpose from './pages/RiemannPurpose'
 import RiemannSlideshow from './pages/RiemannSlideshow'
+import TorusSlideshow from './pages/TorusSlideshow'
+import NestedTori from './pages/NestedTori'
+import TorusInteractive from './pages/TorusInteractive'
+import XiTransition from './pages/XiTransition'
+import Mandelbrot from './pages/Mandelbrot'
 
 function Gallery() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
@@ -52,7 +57,7 @@ function Gallery() {
     return embedUrl.replace('claude.site', 'claude.ai').replace('/embed', '')
   }
 
-  // Hardcoded slideshows for now - these will be shown as cards
+  // Hardcoded slideshows
   const slideshows = [
     {
       id: 'riemann-slideshow',
@@ -61,6 +66,66 @@ function Gallery() {
       path: '/slidedecks/riemann',
       category: 'riemann-sphere',
       tags: ['pscale', 'self-organization', 'purpose-trees']
+    },
+    {
+      id: 'torus-slideshow',
+      title: 'Torus Q-Moment',
+      description: 'Four-phase cognitive processing mapped to torus geometry. Q1 sensation, Q2 feeling, Q3 thinking, Q4 representation — nested flows of consciousness.',
+      path: '/slidedecks/torus',
+      category: 'torus',
+      tags: ['q-moment', 'consciousness', 'phase-model']
+    }
+  ]
+
+  // Standalone visualizations
+  const visualizations = [
+    {
+      id: 'nested-tori',
+      title: 'Nested Tori Q-Moment',
+      description: 'Three-dimensional nested tori representing the layered structure of cognitive processing phases.',
+      path: '/viz/nested-tori',
+      category: 'torus',
+      tags: ['3d', 'q-moment', 'interactive']
+    },
+    {
+      id: 'torus-interactive',
+      title: 'Torus R-r Interactive',
+      description: 'Interactive exploration of major radius (R) and minor radius (r) relationships in torus geometry.',
+      path: '/viz/torus-interactive',
+      category: 'torus',
+      tags: ['geometry', 'interactive', 'parameters']
+    },
+    {
+      id: 'xi-transition',
+      title: 'Xi Transition',
+      description: 'Visualization of xi (ξ) transitions between cognitive states and phase boundaries.',
+      path: '/viz/xi-transition',
+      category: 'transitions',
+      tags: ['phase', 'transformation', 'dynamics']
+    },
+    {
+      id: 'mandelbrot',
+      title: 'Mandelbrot-Riemann',
+      description: 'Connection between Mandelbrot set iteration and Riemann sphere projection — fractal boundaries in psycho-social space.',
+      path: '/viz/mandelbrot',
+      category: 'fractals',
+      tags: ['mandelbrot', 'iteration', 'complex-plane']
+    },
+    {
+      id: 'riemann-dynamics',
+      title: 'Riemann Psycho-Social Dynamics',
+      description: 'Self-organizing points on the Riemann sphere demonstrating collective equilibration processes.',
+      path: '/viz/riemann-dynamics',
+      category: 'riemann-sphere',
+      tags: ['self-organization', 'collective', 'dynamics']
+    },
+    {
+      id: 'riemann-purpose',
+      title: 'Riemann Purpose Tree',
+      description: 'Purpose trees mapped to Riemann sphere geometry — hierarchical intentions across pscale levels.',
+      path: '/viz/riemann-purpose',
+      category: 'riemann-sphere',
+      tags: ['purpose-tree', 'pscale', 'hierarchy']
     }
   ]
 
@@ -102,6 +167,43 @@ function Gallery() {
                   {slideshow.category}
                 </span>
                 {slideshow.tags.slice(0, 2).map((tag) => (
+                  <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Standalone Visualizations */}
+      <section className="max-w-6xl mx-auto mb-12">
+        <h2 className="text-xl font-semibold text-white mb-4">Interactive Visualizations</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visualizations.map((viz) => (
+            <Link
+              key={viz.id}
+              to={viz.path}
+              className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-green-500 group"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-xl font-semibold text-white group-hover:text-green-300 transition-colors">
+                  {viz.title}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-green-900/50 text-green-300 px-2 py-1 rounded">interactive</span>
+                  <span className="text-gray-500 group-hover:text-green-400 transition-colors">→</span>
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                {viz.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-purple-900/50 text-purple-300 text-xs rounded">
+                  {viz.category}
+                </span>
+                {viz.tags.slice(0, 2).map((tag) => (
                   <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
                     {tag}
                   </span>
@@ -286,10 +388,15 @@ export default function App() {
       
       {/* Slideshow routes */}
       <Route path="/slidedecks/riemann" element={<RiemannSlideshow />} />
+      <Route path="/slidedecks/torus" element={<TorusSlideshow />} />
       
       {/* Visualization routes */}
       <Route path="/viz/riemann-dynamics" element={<RiemannDynamics />} />
       <Route path="/viz/riemann-purpose" element={<RiemannPurpose />} />
+      <Route path="/viz/nested-tori" element={<NestedTori />} />
+      <Route path="/viz/torus-interactive" element={<TorusInteractive />} />
+      <Route path="/viz/xi-transition" element={<XiTransition />} />
+      <Route path="/viz/mandelbrot" element={<Mandelbrot />} />
     </Routes>
   )
 }
