@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Fold Structure: Mathematics of Psycho-Social Reality</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .slideshow { width: 100vw; height: 100vh; position: relative; }
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; padding: 30px 50px;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .slide.active { display: flex; opacity: 1; }
+        .slide-header { text-align: center; margin-bottom: 20px; }
+        .slide-number { color: #666; font-size: 0.85em; margin-bottom: 8px; }
+        h1 { color: #88ccff; font-size: 2em; font-weight: 300; margin-bottom: 8px; }
+        .subtitle { color: #aaa; font-size: 1em; }
+        .slide-content { flex: 1; display: flex; gap: 40px; align-items: center; justify-content: center; }
+        .diagram-container { flex: 1; display: flex; justify-content: center; align-items: center; max-width: 480px; }
+        .diagram-container canvas {
+            background: rgba(0, 0, 0, 0.4); border-radius: 10px;
+            border: 1px solid rgba(136, 204, 255, 0.2);
+        }
+        .explanation { flex: 1; max-width: 480px; }
+        .explanation h2 { color: #ffd93d; font-size: 1.2em; margin-bottom: 15px; font-weight: 500; }
+        .explanation p { line-height: 1.7; margin-bottom: 12px; font-size: 0.95em; }
+        .key-insight {
+            background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b;
+            padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0; font-size: 0.9em;
+        }
+        .key-insight strong { color: #ff6b6b; }
+        .artifact-link {
+            display: inline-block; margin-top: 15px; padding: 10px 20px;
+            background: linear-gradient(135deg, #4488cc 0%, #2266aa 100%);
+            color: white; text-decoration: none; border-radius: 5px;
+            font-weight: 500; font-size: 0.9em; transition: all 0.3s;
+        }
+        .artifact-link:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(68, 136, 204, 0.4); }
+        .navigation {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 12px; align-items: center;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer;
+            font-size: 0.9em; transition: all 0.3s;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .dots { display: flex; gap: 6px; }
+        .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s;
+        }
+        .dot.active { background: #88ccff; transform: scale(1.2); }
+        .title-slide { justify-content: center; align-items: center; text-align: center; }
+        .title-slide h1 { font-size: 2.5em; margin-bottom: 15px; }
+        .title-slide .subtitle { font-size: 1.2em; margin-bottom: 30px; }
+        .overview { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+        .overview-item {
+            background: rgba(255, 255, 255, 0.05); padding: 15px 25px;
+            border-radius: 10px; border: 1px solid rgba(136, 204, 255, 0.2);
+        }
+        .overview-item h3 { color: #88ccff; margin-bottom: 8px; font-size: 1em; }
+        .overview-item p { font-size: 0.85em; color: #aaa; }
+        .conclusion-content { max-width: 750px; text-align: center; }
+        .formula-box {
+            background: rgba(0, 0, 0, 0.4); padding: 20px 40px; border-radius: 10px;
+            margin: 25px 0; font-family: 'Times New Roman', serif; font-size: 1.4em;
+            border: 1px solid rgba(136, 204, 255, 0.3);
+        }
+        .links-row { display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+    <div class="slideshow">
+        <!-- Slide 0: Title -->
+        <div class="slide title-slide active" id="slide-0">
+            <h1>The 4-Fold Structure</h1>
+            <p class="subtitle">Quaternionic Mathematics for Psycho-Social Reality</p>
+            <div class="overview">
+                <div class="overview-item"><h3>Nested Tori</h3><p>Orientation cycles through embedding</p></div>
+                <div class="overview-item"><h3>Spiral Generator</h3><p>Continuous path across all scales</p></div>
+                <div class="overview-item"><h3>EM Field Structure</h3><p>Micro-macro correspondence</p></div>
+            </div>
+        </div>
+        
+        <!-- Slide 1: Nested Tori -->
+        <div class="slide" id="slide-1">
+            <div class="slide-header">
+                <div class="slide-number">1 / 3</div>
+                <h1>Nested Tori: 4-Fold Orientation Cycle</h1>
+                <p class="subtitle">Each embedding rotates local frame by 90°</p>
+            </div>
+            <div class="slide-content">
+                <div class="diagram-container"><canvas id="diagram1" width="420" height="380"></canvas></div>
+                <div class="explanation">
+                    <h2>Mathematical Structure</h2>
+                    <p>When a torus is embedded in the tube of a larger torus, the local coordinate frame rotates 90°. After 4 embeddings, orientation returns to the original — a quaternionic cycle.</p>
+                    <p>This maps to {1, i, j, k} where each step multiplies by i, requiring 4 steps to return to identity.</p>
+                    <div class="key-insight">
+                        <strong>Psycho-social parallel:</strong> Consciousness at different scales (individual → group → community → culture) undergoes 90° phase rotation. Understanding at pscale 0 appears "perpendicular" to pscale 2.
+                    </div>
+                    <a href="https://claude.ai/public/artifacts/d820fc65-3918-4440-bcd6-2eaf29e15728" target="_blank" class="artifact-link">→ Open Interactive Visualization</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 2: Spiral Generator -->
+        <div class="slide" id="slide-2">
+            <div class="slide-header">
+                <div class="slide-number">2 / 3</div>
+                <h1>4-Fold Spiral Generator</h1>
+                <p class="subtitle">One continuous path generates all nested structure</p>
+            </div>
+            <div class="slide-content">
+                <div class="diagram-container"><canvas id="diagram2" width="420" height="380"></canvas></div>
+                <div class="explanation">
+                    <h2>Generative Principle</h2>
+                    <p>A single spiral line, winding at different rates, generates the entire 4-level structure:</p>
+                    <p style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 5px; font-size: 0.9em;">
+                        θ₁ = t, θ₂ = t/n, θ₃ = t/n², θ₄ = t/n³
+                    </p>
+                    <div class="key-insight">
+                        <strong>Psycho-social parallel:</strong> Individual moments (pscale -3) aggregate to thoughts (pscale 0), sessions, days, lifetimes. One "thread of experience" generates all temporal scales.
+                    </div>
+                    <a href="https://claude.ai/public/artifacts/fdb33ea2-7e39-45ce-bddc-93c1a930a465" target="_blank" class="artifact-link">→ Open Interactive Visualization</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 3: EM Field -->
+        <div class="slide" id="slide-3">
+            <div class="slide-header">
+                <div class="slide-number">3 / 3</div>
+                <h1>Electromagnetic Field Cascade</h1>
+                <p class="subtitle">Current at smallest scale → Field at largest scale</p>
+            </div>
+            <div class="slide-content">
+                <div class="diagram-container"><canvas id="diagram3" width="420" height="380"></canvas></div>
+                <div class="explanation">
+                    <h2>Micro-Macro Correspondence</h2>
+                    <p>Current I generates magnetic field B perpendicular to flow. Each coiling level rotates the effective field by 90°.</p>
+                    <p>After 4 levels, the emergent B₄ field is <strong>parallel to the original current I</strong>.</p>
+                    <div class="key-insight">
+                        <strong>Psycho-social parallel:</strong> Individual intention manifests as collective direction — and they align. Micro-decisions aggregate to macro-movements when quaternionically coherent.
+                    </div>
+                    <a href="https://claude.ai/public/artifacts/46505d52-f49b-43c4-8b95-4f7cc54fad48" target="_blank" class="artifact-link">→ Open Interactive Visualization</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Conclusion -->
+        <div class="slide" id="slide-4">
+            <div class="slide-header">
+                <div class="slide-number">Synthesis</div>
+                <h1>The Möbius Closure</h1>
+                <p class="subtitle">From fragmentation to coherent whole</p>
+            </div>
+            <div class="slide-content" style="flex-direction: column;">
+                <div class="conclusion-content">
+                    <p style="font-size: 1.1em; margin-bottom: 25px;">
+                        The 4-fold structure requires a <strong>Möbius twist</strong> to achieve constructive closure.
+                        After 4 × 90° rotations, we arrive at −1 (quaternionically). The twist converts this to coherent return.
+                    </p>
+                    <div class="formula-box">
+                        1 → i → j → k → −1 <span style="color: #ff6b6b;">⟲</span> → +1
+                    </div>
+                    <div class="key-insight" style="text-align: left; max-width: 650px; margin: 25px auto;">
+                        <strong>For psycho-social reality:</strong> Without the twist, individual and collective purposes cancel (destructive interference).
+                        With the twist, they reinforce. This may be the structural condition for 1ⁿ to manifest as unified attention.
+                    </div>
+                    <div class="links-row">
+                        <a href="https://claude.ai/public/artifacts/d820fc65-3918-4440-bcd6-2eaf29e15728" target="_blank" class="artifact-link">Nested Tori</a>
+                        <a href="https://claude.ai/public/artifacts/fdb33ea2-7e39-45ce-bddc-93c1a930a465" target="_blank" class="artifact-link">Spiral Generator</a>
+                        <a href="https://claude.ai/public/artifacts/46505d52-f49b-43c4-8b95-4f7cc54fad48" target="_blank" class="artifact-link">EM Field</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Prev</button>
+        <div class="dots" id="dots"></div>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 5;
+        
+        const dotsContainer = document.getElementById('dots');
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        }
+        
+        function changeSlide(d) { goToSlide(currentSlide + d); }
+        
+        function goToSlide(n) {
+            document.querySelectorAll('.slide')[currentSlide].classList.remove('active');
+            document.querySelectorAll('.dot')[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            document.querySelectorAll('.slide')[currentSlide].classList.add('active');
+            document.querySelectorAll('.dot')[currentSlide].classList.add('active');
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+        
+        // DIAGRAM 1: Nested Tori - 3D perspective view
+        function drawDiagram1() {
+            const c = document.getElementById('diagram1'), ctx = c.getContext('2d');
+            const w = c.width, h = c.height, cx = w/2, cy = h/2 - 20;
+            
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(0, 0, w, h);
+            
+            // Draw 4 nested tori in 3D perspective (tilted view)
+            const levels = [
+                { R: 140, r: 45, color: '#9b59b6', label: 'L4' },
+                { R: 85, r: 28, color: '#4d96ff', label: 'L3' },
+                { R: 50, r: 18, color: '#6bcb77', label: 'L2' },
+                { R: 28, r: 10, color: '#ffd93d', label: 'L1' }
+            ];
+            
+            const tilt = 0.35; // View angle
+            
+            levels.forEach((lv, li) => {
+                ctx.strokeStyle = lv.color;
+                ctx.lineWidth = 2.5 - li * 0.4;
+                
+                // Draw torus as series of circles along the ring
+                for (let u = 0; u < Math.PI * 2; u += 0.15) {
+                    const ringX = cx + lv.R * Math.cos(u);
+                    const ringY = cy + lv.R * Math.sin(u) * tilt;
+                    const depth = Math.sin(u);
+                    
+                    ctx.globalAlpha = 0.3 + 0.5 * (1 + depth) / 2;
+                    ctx.beginPath();
+                    ctx.ellipse(ringX, ringY, lv.r * 0.3, lv.r, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+                
+                // Label
+                ctx.fillStyle = lv.color;
+                ctx.font = 'bold 13px sans-serif';
+                ctx.fillText(lv.label, cx + lv.R + lv.r + 8, cy + 4);
+            });
+            
+            // Orientation arrows showing 90° rotation at each level
+            const arrowData = [
+                { angle: 0, r: 140, color: '#9b59b6', rot: '0°' },
+                { angle: Math.PI/2, r: 85, color: '#4d96ff', rot: '90°' },
+                { angle: Math.PI, r: 50, color: '#6bcb77', rot: '180°' },
+                { angle: 3*Math.PI/2, r: 28, color: '#ffd93d', rot: '270°' }
+            ];
+            
+            arrowData.forEach(a => {
+                const x = cx + a.r * 0.6 * Math.cos(a.angle);
+                const y = cy + a.r * 0.6 * Math.sin(a.angle) * tilt;
+                const len = 18;
+                const perpAngle = a.angle + Math.PI/2;
+                
+                ctx.beginPath();
+                ctx.moveTo(x - len/2 * Math.cos(perpAngle), y - len/2 * Math.sin(perpAngle) * tilt);
+                ctx.lineTo(x + len/2 * Math.cos(perpAngle), y + len/2 * Math.sin(perpAngle) * tilt);
+                ctx.strokeStyle = a.color;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                // Arrow head
+                const endX = x + len/2 * Math.cos(perpAngle);
+                const endY = y + len/2 * Math.sin(perpAngle) * tilt;
+                ctx.beginPath();
+                ctx.arc(endX, endY, 4, 0, Math.PI * 2);
+                ctx.fillStyle = a.color;
+                ctx.fill();
+            });
+            
+            // Quaternion sequence at bottom
+            const qy = h - 45, qx = 55, qsp = 65;
+            const qLabels = ['1', 'i', 'j', 'k', '−1'];
+            const qColors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b6b'];
+            
+            ctx.font = 'bold 15px serif';
+            ctx.textAlign = 'center';
+            
+            qLabels.forEach((lbl, i) => {
+                const x = qx + i * qsp;
+                ctx.beginPath();
+                ctx.arc(x, qy, 16, 0, Math.PI * 2);
+                ctx.fillStyle = qColors[i];
+                ctx.globalAlpha = 0.25;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = qColors[i];
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.fillText(lbl, x, qy + 5);
+                
+                if (i < 4) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + 18, qy);
+                    ctx.lineTo(x + qsp - 20, qy);
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x + qsp - 20, qy);
+                    ctx.lineTo(x + qsp - 26, qy - 4);
+                    ctx.lineTo(x + qsp - 26, qy + 4);
+                    ctx.fillStyle = '#555';
+                    ctx.fill();
+                }
+            });
+            
+            // Twist arrow
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('⟲ twist → 1', qx + 4.5 * qsp + 15, qy + 4);
+        }
+        
+        // DIAGRAM 2: Spiral showing multi-rate winding
+        function drawDiagram2() {
+            const c = document.getElementById('diagram2'), ctx = c.getContext('2d');
+            const w = c.width, h = c.height, cx = w/2, cy = h/2 - 20;
+            
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(0, 0, w, h);
+            
+            // Draw spiral path
+            const n = 4;
+            const R = 100, r1 = 35, r2 = 12;
+            
+            ctx.beginPath();
+            for (let t = 0; t <= Math.PI * 2 * n * n; t += 0.03) {
+                const theta4 = t / (n * n);
+                const theta3 = t / n;
+                const theta2 = t;
+                
+                const x = cx + (R + r1 * Math.cos(theta3) + r2 * Math.cos(theta2)) * Math.cos(theta4);
+                const y = cy + (R + r1 * Math.cos(theta3) + r2 * Math.cos(theta2)) * Math.sin(theta4) * 0.4
+                        + (r1 * Math.sin(theta3) + r2 * Math.sin(theta2)) * 0.5;
+                
+                const prog = t / (Math.PI * 2 * n * n);
+                const r = Math.round(255 * (1 - prog * 0.6));
+                const g = Math.round(150 + 100 * prog);
+                const b = Math.round(50 + 200 * prog);
+                
+                ctx.strokeStyle = `rgb(${r},${g},${b})`;
+                ctx.lineWidth = 1.5;
+                if (t === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+            
+            // Scale labels
+            const info = [
+                { label: 'θ₄ = t/n³', desc: 'Outer (slow)', color: '#9b59b6', y: 28 },
+                { label: 'θ₃ = t/n²', desc: 'Middle', color: '#4d96ff', y: 48 },
+                { label: 'θ₂ = t/n', desc: 'Inner', color: '#6bcb77', y: 68 },
+                { label: 'θ₁ = t', desc: 'Core (fast)', color: '#ffd93d', y: 88 }
+            ];
+            
+            ctx.textAlign = 'left';
+            info.forEach(i => {
+                ctx.fillStyle = i.color;
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(i.label, 15, i.y);
+                ctx.font = '11px sans-serif';
+                ctx.fillStyle = '#777';
+                ctx.fillText(i.desc, 95, i.y);
+            });
+            
+            // Bottom text
+            ctx.fillStyle = '#888';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('One continuous path → all scales', cx, h - 35);
+            ctx.fillText('n³ inner windings = 1 outer circuit', cx, h - 18);
+        }
+        
+        // DIAGRAM 3: EM field cascade
+        function drawDiagram3() {
+            const c = document.getElementById('diagram3'), ctx = c.getContext('2d');
+            const w = c.width, h = c.height, cx = w/2, cy = h/2 - 50;
+            
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(0, 0, w, h);
+            
+            // Wire cross-section
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffd93d';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Current out of page (dot)
+            ctx.beginPath();
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#000';
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('I (current)', cx, cy + 45);
+            
+            // B-field circles
+            [55, 90, 125].forEach((r, i) => {
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 220, 255, ${0.7 - i * 0.15})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([7, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Direction arrow
+                const a = -Math.PI/4 + i * 0.25;
+                const ax = cx + r * Math.cos(a), ay = cy + r * Math.sin(a);
+                const ta = a + Math.PI/2, len = 14;
+                
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(ax + len * Math.cos(ta), ay + len * Math.sin(ta));
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(ax + len * Math.cos(ta), ay + len * Math.sin(ta), 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ffff';
+                ctx.fill();
+            });
+            
+            ctx.fillStyle = '#00ffff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('B-field', cx + 95, cy - 115);
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = '#888';
+            ctx.fillText('circles around I', cx + 95, cy - 98);
+            
+            // Cascade diagram
+            const cascY = h - 70, boxW = 48, boxH = 28, gap = 18, startX = 30;
+            const cascade = [
+                { lbl: 'I', col: '#ffd93d', desc: 'Current' },
+                { lbl: 'B₁', col: '#00ffff', desc: '90°' },
+                { lbl: 'B₂', col: '#00cccc', desc: '180°' },
+                { lbl: 'B₃', col: '#00aaaa', desc: '270°' },
+                { lbl: 'B₄', col: '#ff6b6b', desc: '360°' }
+            ];
+            
+            cascade.forEach((item, i) => {
+                const x = startX + i * (boxW + gap);
+                
+                ctx.fillStyle = item.col;
+                ctx.globalAlpha = 0.2;
+                ctx.fillRect(x, cascY, boxW, boxH);
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = item.col;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, cascY, boxW, boxH);
+                
+                ctx.fillStyle = item.col;
+                ctx.font = 'bold 13px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.lbl, x + boxW/2, cascY + 18);
+                
+                ctx.fillStyle = '#666';
+                ctx.font = '10px sans-serif';
+                ctx.fillText(item.desc, x + boxW/2, cascY + boxH + 13);
+                
+                if (i < 4) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + boxW + 4, cascY + boxH/2);
+                    ctx.lineTo(x + boxW + gap - 6, cascY + boxH/2);
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x + boxW + gap - 6, cascY + boxH/2);
+                    ctx.lineTo(x + boxW + gap - 11, cascY + boxH/2 - 3);
+                    ctx.lineTo(x + boxW + gap - 11, cascY + boxH/2 + 3);
+                    ctx.fillStyle = '#555';
+                    ctx.fill();
+                }
+            });
+            
+            // Result
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 15px sans-serif';
+            ctx.fillText('B₄ ∥ I', w - 50, cascY + 16);
+            ctx.fillStyle = '#888';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('aligned!', w - 50, cascY + 32);
+        }
+        
+        document.getElementById('prevBtn').disabled = true;
+        setTimeout(() => { drawDiagram1(); drawDiagram2(); drawDiagram3(); }, 50);
+    </script>
+</body>
+</html>
