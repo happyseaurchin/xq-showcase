@@ -594,7 +594,7 @@ export default function TorusQMomentSlides() {
       highlightRing.push({ x: cx + x1 * scale, y: cy - y1 * scale });
     }
     
-    const interactiveUrl = "https://claude.ai/public/artifacts/bc02edab-acd8-40bd-8f33-7f01cb39e9a9";
+    const interactiveUrl = "https://claude.ai/public/artifacts/6e8235d3-1c60-46e7-ad5c-bd845fa3cb51";
     
     return (
       <div className="flex flex-col items-center">
