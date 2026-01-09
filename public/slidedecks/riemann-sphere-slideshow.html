@@ -168,6 +168,27 @@
       color: #666;
     }
     
+    .home-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(20, 20, 40, 0.9);
+      border: 1px solid #444;
+      color: #aaa;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .home-btn:hover {
+      border-color: #a855f7;
+      color: #c4b5fd;
+      background: rgba(168, 85, 247, 0.1);
+    }
+    
     /* Quadrant colors */
     .q1 { color: #ff6b6b; }
     .q2 { color: #ffd93d; }
@@ -206,6 +227,8 @@
   </style>
 </head>
 <body>
+  <a href="/" class="home-btn">← XQ Gallery</a>
+  
   <div class="slideshow">
     
     <!-- Slide 1: Title -->
