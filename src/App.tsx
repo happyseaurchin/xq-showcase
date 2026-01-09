@@ -44,10 +44,10 @@ function Gallery() {
     <div className="min-h-screen p-8 bg-gray-900">
       <header className="max-w-6xl mx-auto mb-8">
         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-          XQ Showcase
+          XQ
         </h1>
-        <p className="text-gray-400 text-lg">
-          Interactive mathematical visualizations exploring psycho-social dynamics
+        <p className="text-gray-400 text-lg max-w-3xl leading-relaxed">
+          These are not models of psycho-social reality — they are reflections. Like imaginary numbers waiting a century for electromagnetism, the mathematics here awaits application. The measure is time: chronological and experienced. The observer's interpretive act is not separate from what is observed. Nothing here predicts or controls. It may provide insight.
         </p>
       </header>
 
