@@ -2,6 +2,11 @@ import { Routes, Route, Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase, Artifact } from './lib/supabase'
 
+// Visualization pages
+import RiemannDynamics from './pages/RiemannDynamics'
+import RiemannPurpose from './pages/RiemannPurpose'
+import RiemannSlideshow from './pages/RiemannSlideshow'
+
 function Gallery() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,6 +52,18 @@ function Gallery() {
     return embedUrl.replace('claude.site', 'claude.ai').replace('/embed', '')
   }
 
+  // Hardcoded slideshows for now - these will be shown as cards
+  const slideshows = [
+    {
+      id: 'riemann-slideshow',
+      title: 'Riemann Sphere',
+      description: 'XQ mathematics for psycho-social dynamics. Explores the equator (pscale 0) where x^0 = 1 for all x — the shared moment where individuals meet.',
+      path: '/slidedecks/riemann',
+      category: 'riemann-sphere',
+      tags: ['pscale', 'self-organization', 'purpose-trees']
+    }
+  ]
+
   return (
     <div className="min-h-screen p-8 bg-gray-900">
       <header className="max-w-6xl mx-auto mb-8">
@@ -58,109 +75,144 @@ function Gallery() {
         </p>
       </header>
 
-      {categories.length > 1 && (
-        <div className="max-w-6xl mx-auto mb-8 flex gap-2 flex-wrap">
-          <button
-            onClick={() => setFilter(null)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === null
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            All
-          </button>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                filter === cat
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+      {/* Slideshow Cards */}
+      <section className="max-w-6xl mx-auto mb-12">
+        <h2 className="text-xl font-semibold text-white mb-4">Slideshow Presentations</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {slideshows.map((slideshow) => (
+            <Link
+              key={slideshow.id}
+              to={slideshow.path}
+              className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-purple-500 group"
             >
-              {cat}
-            </button>
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
+                  {slideshow.title}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">slides</span>
+                  <span className="text-gray-500 group-hover:text-purple-400 transition-colors">→</span>
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                {slideshow.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-purple-900/50 text-purple-300 text-xs rounded">
+                  {slideshow.category}
+                </span>
+                {slideshow.tags.slice(0, 2).map((tag) => (
+                  <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </Link>
           ))}
         </div>
-      )}
+      </section>
 
-      {standalone.length === 0 ? (
-        <div className="max-w-6xl mx-auto text-center py-20">
-          <div className="text-6xl mb-4">🔮</div>
-          <h2 className="text-2xl font-semibold mb-2 text-white">No artifacts yet</h2>
-          <p className="text-gray-400">
-            Create an artifact in Claude and push it here to get started.
-          </p>
-        </div>
-      ) : (
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {standalone.map((artifact) => {
-            const companions = filteredArtifacts.filter(a => a.parent_id === artifact.id)
-            const viewUrl = getViewUrl(artifact.embed_url)
-            
-            return (
-              <a
-                key={artifact.id}
-                href={viewUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-purple-500 group"
+      {/* Database Artifacts - if any remain */}
+      {standalone.length > 0 && (
+        <>
+          {categories.length > 1 && (
+            <div className="max-w-6xl mx-auto mb-8 flex gap-2 flex-wrap">
+              <button
+                onClick={() => setFilter(null)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filter === null
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                }`}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
-                    {artifact.title}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    {artifact.featured && (
-                      <span className="text-yellow-400">★</span>
+                All
+              </button>
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === cat
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <section className="max-w-6xl mx-auto">
+            <h2 className="text-xl font-semibold text-white mb-4">Additional Artifacts</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {standalone.map((artifact) => {
+                const companions = filteredArtifacts.filter(a => a.parent_id === artifact.id)
+                const viewUrl = getViewUrl(artifact.embed_url)
+                
+                return (
+                  <a
+                    key={artifact.id}
+                    href={viewUrl || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-purple-500 group"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
+                        {artifact.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        {artifact.featured && (
+                          <span className="text-yellow-400">★</span>
+                        )}
+                        {artifact.artifact_type === 'slideshow' && (
+                          <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">slides</span>
+                        )}
+                        {artifact.artifact_type === 'visualization' && (
+                          <span className="text-xs bg-green-900/50 text-green-300 px-2 py-1 rounded">interactive</span>
+                        )}
+                        <span className="text-gray-500 group-hover:text-purple-400 transition-colors">↗</span>
+                      </div>
+                    </div>
+                    {artifact.description && (
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                        {artifact.description}
+                      </p>
                     )}
-                    {artifact.artifact_type === 'slideshow' && (
-                      <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">slides</span>
-                    )}
-                    {artifact.artifact_type === 'visualization' && (
-                      <span className="text-xs bg-green-900/50 text-green-300 px-2 py-1 rounded">interactive</span>
-                    )}
-                    <span className="text-gray-500 group-hover:text-purple-400 transition-colors">↗</span>
-                  </div>
-                </div>
-                {artifact.description && (
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {artifact.description}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-1 bg-purple-900/50 text-purple-300 text-xs rounded">
-                    {artifact.category}
-                  </span>
-                  {artifact.tags?.slice(0, 2).map((tag) => (
-                    <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {companions.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-700">
-                    <p className="text-xs text-gray-500 mb-2">Related:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {companions.map(c => (
-                        <span key={c.id} className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">
-                          {c.title}
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-purple-900/50 text-purple-300 text-xs rounded">
+                        {artifact.category}
+                      </span>
+                      {artifact.tags?.slice(0, 2).map((tag) => (
+                        <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
+                          {tag}
                         </span>
                       ))}
                     </div>
-                  </div>
-                )}
-              </a>
-            )
-          })}
-        </div>
+                    {companions.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-gray-700">
+                        <p className="text-xs text-gray-500 mb-2">Related:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {companions.map(c => (
+                            <span key={c.id} className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">
+                              {c.title}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </a>
+                )
+              })}
+            </div>
+          </section>
+        </>
       )}
       
       <footer className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-800 text-center">
         <p className="text-gray-500 text-sm">
-          Artifacts open in Claude.ai
+          Interactive visualizations powered by React
         </p>
       </footer>
     </div>
@@ -231,6 +283,13 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Gallery />} />
       <Route path="/artifacts/:slug" element={<ArtifactView />} />
+      
+      {/* Slideshow routes */}
+      <Route path="/slidedecks/riemann" element={<RiemannSlideshow />} />
+      
+      {/* Visualization routes */}
+      <Route path="/viz/riemann-dynamics" element={<RiemannDynamics />} />
+      <Route path="/viz/riemann-purpose" element={<RiemannPurpose />} />
     </Routes>
   )
 }
