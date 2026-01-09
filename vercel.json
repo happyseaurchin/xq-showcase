@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/slidedecks/:path*.html", "destination": "/slidedecks/:path*.html" },
+    { "source": "/library/:path*", "destination": "/library/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
