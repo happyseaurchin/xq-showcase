@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properly Embedded Nested Tori with 90° Rotations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #000; color: #e0e0e0; min-height: 100vh; overflow: hidden; }
+        #canvas { display: block; cursor: grab; }
+        #canvas:active { cursor: grabbing; }
+        .ui-overlay { position: fixed; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.85); border-radius: 12px; padding: 20px; border: 1px solid rgba(136, 204, 255, 0.3); max-width: 300px; z-index: 100; }
+        h1 { color: #88ccff; font-size: 1.1em; margin-bottom: 15px; }
+        .control-group { margin-bottom: 12px; }
+        label { display: block; color: #88ccff; font-size: 0.8em; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; accent-color: #88ccff; }
+        .zoom-display { text-align: center; font-family: 'Courier New', monospace; font-size: 1em; color: #ffd93d; margin: 8px 0; }
+        .level-legend { margin-top: 12px; font-size: 0.75em; }
+        .level-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+        .level-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .zoom-buttons { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        button { flex: 1; min-width: 45px; background: linear-gradient(135deg, #4488cc 0%, #2266aa 100%); color: white; border: none; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75em; transition: transform 0.2s; }
+        button:hover { transform: translateY(-1px); }
+        .checkbox-group { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.8em; }
+        .checkbox-group input { width: 14px; height: 14px; accent-color: #88ccff; }
+        .instructions { font-size: 0.7em; color: #888; margin-top: 12px; line-height: 1.4; }
+        .info-panel { position: fixed; bottom: 20px; left: 20px; background: rgba(0, 0, 0, 0.85); border-radius: 12px; padding: 15px; border: 1px solid rgba(136, 204, 255, 0.3); font-size: 0.8em; max-width: 380px; }
+        .info-panel h3 { color: #88ccff; margin-bottom: 8px; font-size: 0.95em; }
+        .orientation-diagram { font-family: 'Courier New', monospace; background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 4px; margin-top: 8px; font-size: 0.85em; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="ui-overlay">
+        <h1>Nested Tori with 90° Rotations</h1>
+        <div class="control-group">
+            <label>Zoom (scroll or slider)</label>
+            <input type="range" id="zoomSlider" min="-2" max="4" step="0.05" value="0">
+            <div class="zoom-display" id="zoomDisplay">1.0×</div>
+        </div>
+        <div class="control-group">
+            <label>Position along L4 tube (u₄)</label>
+            <input type="range" id="u4Slider" min="0" max="6.283" step="0.05" value="0">
+        </div>
+        <div class="control-group">
+            <label>Position along L3 tube (u₃)</label>
+            <input type="range" id="u3Slider" min="0" max="6.283" step="0.05" value="0">
+        </div>
+        <div class="zoom-buttons">
+            <button onclick="zoomToLevel(4)">L4</button>
+            <button onclick="zoomToLevel(3)">L3</button>
+            <button onclick="zoomToLevel(2)">L2</button>
+            <button onclick="zoomToLevel(1)">L1</button>
+            <button onclick="zoomToLevel(0)">L0</button>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="showAllLevels" checked>
+            <label for="showAllLevels">Show all levels</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="highlightTube" checked>
+            <label for="highlightTube">Highlight tube cross-sections</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="animateRotation" checked>
+            <label for="animateRotation">Auto-rotate</label>
+        </div>
+        <div class="level-legend">
+            <div class="level-item"><div class="level-dot" style="background: #9b59b6;"></div><span>L4: 0° (outer)</span></div>
+            <div class="level-item"><div class="level-dot" style="background: #4d96ff;"></div><span>L3: 90° rotation</span></div>
+            <div class="level-item"><div class="level-dot" style="background: #6bcb77;"></div><span>L2: 180° rotation</span></div>
+            <div class="level-item"><div class="level-dot" style="background: #ffd93d;"></div><span>L1: 270° rotation</span></div>
+            <div class="level-item"><div class="level-dot" style="background: #ff6b6b;"></div><span>L0: 360° ≡ 0° (core)</span></div>
+        </div>
+        <div class="instructions">
+            <strong>Controls:</strong> Scroll to zoom • Drag to rotate<br>
+            Each level rotates 90° to fit in the tube of the level above.
+        </div>
+    </div>
+    <div class="info-panel">
+        <h3>Quaternionic 90° Embedding</h3>
+        <p>The tube cross-section is perpendicular to the path. Each nested torus rotates 90° to use that cross-section as its new path.</p>
+        <div class="orientation-diagram">
+L4 path: XY plane → tube: YZ plane<br>
+L3 path: YZ plane → tube: XZ plane (90°)<br>
+L2 path: XZ plane → tube: XY plane (180°)<br>
+L1 path: XY plane → tube: YZ plane (270°)<br>
+L0 circle: YZ plane (360° ≡ 0°)
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let zoom = 1, targetZoom = 1, rotationX = 0.3, rotationY = 0, autoRotate = true, showAllLevels = true, highlightTube = true, u4Position = 0, u3Position = 0;
+        const levels = [
+            { R: 0, r: 0.037, color: '#ff6b6b', name: 'L0' },
+            { R: 0.11, r: 0.037, color: '#ffd93d', name: 'L1' },
+            { R: 0.33, r: 0.11, color: '#6bcb77', name: 'L2' },
+            { R: 1.0, r: 0.33, color: '#4d96ff', name: 'L3' },
+            { R: 3.0, r: 1.0, color: '#9b59b6', name: 'L4' },
+        ];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        function vec3(x, y, z) { return { x, y, z }; }
+        function add(a, b) { return vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
+        function scale(v, s) { return vec3(v.x * s, v.y * s, v.z * s); }
+        function normalize(v) { const len = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z); return len > 0 ? scale(v, 1/len) : v; }
+        function rotateForView(p, rx, ry) { let { x, y, z } = p; let cos = Math.cos(rx), sin = Math.sin(rx); let y1 = y * cos - z * sin, z1 = y * sin + z * cos; y = y1; z = z1; cos = Math.cos(ry); sin = Math.sin(ry); let x1 = x * cos + z * sin; z1 = -x * sin + z * cos; return vec3(x1, y1, z1); }
+        function project(point) { const p = rotateForView(point, rotationX, rotationY); const fov = 4; const scl = (canvas.height * 0.12 * zoom) / (fov + p.z * 0.2); return { x: canvas.width / 2 + p.x * scl, y: canvas.height / 2 - p.y * scl, z: p.z, scale: scl }; }
+        function createFrame(origin, e1, e2, e3) { return { origin, e1: normalize(e1), e2: normalize(e2), e3: normalize(e3) }; }
+        function localToWorld(localPt, frame) { return add(add(add(frame.origin, scale(frame.e1, localPt.x)), scale(frame.e2, localPt.y)), scale(frame.e3, localPt.z)); }
+        function identityFrame() { return createFrame(vec3(0, 0, 0), vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 1)); }
+        function getTorusTubeFrame(R, r, u, parentFrame) { const pathX = R * Math.cos(u), pathY = R * Math.sin(u); const center = localToWorld(vec3(pathX, pathY, 0), parentFrame); const tangentLocal = vec3(-Math.sin(u), Math.cos(u), 0); const tangent = normalize(add(add(scale(parentFrame.e1, tangentLocal.x), scale(parentFrame.e2, tangentLocal.y)), scale(parentFrame.e3, tangentLocal.z))); const normalLocal = vec3(Math.cos(u), Math.sin(u), 0); const normal = normalize(add(add(scale(parentFrame.e1, normalLocal.x), scale(parentFrame.e2, normalLocal.y)), scale(parentFrame.e3, normalLocal.z))); const binormal = parentFrame.e3; return createFrame(center, normal, binormal, tangent); }
+        function generateTorus(R, r, frame, uSegs = 48, vSegs = 24) { const rings = []; for (let i = 0; i <= uSegs; i++) { const u = (i / uSegs) * Math.PI * 2; const ring = []; for (let j = 0; j <= vSegs; j++) { const v = (j / vSegs) * Math.PI * 2; const localPt = vec3((R + r * Math.cos(v)) * Math.cos(u), (R + r * Math.cos(v)) * Math.sin(u), r * Math.sin(v)); ring.push(localToWorld(localPt, frame)); } rings.push(ring); } return rings; }
+        function generateTubeCircle(R, r, u, frame, segments = 48) { const points = []; const tubeFrame = getTorusTubeFrame(R, r, u, frame); for (let i = 0; i <= segments; i++) { const v = (i / segments) * Math.PI * 2; const localPt = vec3(r * Math.cos(v), r * Math.sin(v), 0); points.push(localToWorld(localPt, tubeFrame)); } return points; }
+        function drawTorusWireframe(rings, color, alpha = 0.6, lineWidth = 1) { if (!rings || rings.length === 0) return; ctx.strokeStyle = color; ctx.lineWidth = Math.max(0.5, lineWidth * Math.min(zoom, 3)); ctx.globalAlpha = alpha; const uStep = Math.max(1, Math.floor(rings.length / 20)); for (let i = 0; i < rings.length - 1; i += uStep) { ctx.beginPath(); const ring = rings[i]; const p0 = project(ring[0]); ctx.moveTo(p0.x, p0.y); for (let j = 1; j < ring.length; j++) { const p = project(ring[j]); ctx.lineTo(p.x, p.y); } ctx.stroke(); } const vStep = Math.max(1, Math.floor(rings[0].length / 12)); for (let j = 0; j < rings[0].length - 1; j += vStep) { ctx.beginPath(); const p0 = project(rings[0][j]); ctx.moveTo(p0.x, p0.y); for (let i = 1; i < rings.length; i++) { const p = project(rings[i][j]); ctx.lineTo(p.x, p.y); } ctx.stroke(); } ctx.globalAlpha = 1; }
+        function drawPath(points, color, lineWidth = 2, alpha = 1) { if (points.length < 2) return; ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = Math.max(1, lineWidth * Math.min(zoom, 3)); ctx.globalAlpha = alpha; const p0 = project(points[0]); ctx.moveTo(p0.x, p0.y); for (let i = 1; i < points.length; i++) { const p = project(points[i]); ctx.lineTo(p.x, p.y); } ctx.stroke(); ctx.globalAlpha = 1; }
+        function render() { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); const L4 = levels[4], L3 = levels[3], L2 = levels[2], L1 = levels[1], L0 = levels[0]; const frame4 = identityFrame(); if (showAllLevels || zoom < 2) { const torus4 = generateTorus(L4.R, L4.r, frame4, 48, 24); drawTorusWireframe(torus4, L4.color, 0.4, 1); } if (highlightTube) { const tube4 = generateTubeCircle(L4.R, L4.r, u4Position, frame4); drawPath(tube4, L4.color, 3, 1); } const frame3 = getTorusTubeFrame(L4.R, L4.r, u4Position, frame4); if (showAllLevels || (zoom >= 0.5 && zoom < 8)) { const torus3 = generateTorus(L3.R, L3.r, frame3, 40, 20); drawTorusWireframe(torus3, L3.color, 0.5, 1.2); } if (highlightTube && zoom > 0.8) { const tube3 = generateTubeCircle(L3.R, L3.r, u3Position, frame3); drawPath(tube3, L3.color, 2.5, 1); } const frame2 = getTorusTubeFrame(L3.R, L3.r, u3Position, frame3); if (showAllLevels || (zoom >= 2 && zoom < 25)) { const torus2 = generateTorus(L2.R, L2.r, frame2, 36, 18); drawTorusWireframe(torus2, L2.color, 0.6, 1.3); } if (highlightTube && zoom > 3) { const tube2 = generateTubeCircle(L2.R, L2.r, 0, frame2); drawPath(tube2, L2.color, 2, 1); } const frame1 = getTorusTubeFrame(L2.R, L2.r, 0, frame2); if (showAllLevels || (zoom >= 8 && zoom < 80)) { const torus1 = generateTorus(L1.R, L1.r, frame1, 32, 16); drawTorusWireframe(torus1, L1.color, 0.7, 1.5); } if (highlightTube && zoom > 12) { const tube1 = generateTubeCircle(L1.R, L1.r, 0, frame1); drawPath(tube1, L1.color, 1.8, 1); } const frame0 = getTorusTubeFrame(L1.R, L1.r, 0, frame1); if (zoom >= 20) { const coreCircle = []; for (let i = 0; i <= 48; i++) { const t = (i / 48) * Math.PI * 2; const localPt = vec3(L0.r * Math.cos(t), L0.r * Math.sin(t), 0); coreCircle.push(localToWorld(localPt, frame0)); } drawPath(coreCircle, L0.color, 3, 1); } ctx.fillStyle = '#fff'; ctx.font = '14px monospace'; ctx.fillText('Zoom: ' + zoom.toFixed(1) + '×', canvas.width - 120, 30); }
+        function animate() { zoom += (targetZoom - zoom) * 0.08; if (autoRotate) rotationY += 0.004; render(); document.getElementById('zoomDisplay').textContent = zoom.toFixed(1) + '×'; document.getElementById('zoomSlider').value = Math.log10(zoom); requestAnimationFrame(animate); }
+        function zoomToLevel(level) { const zooms = [60, 20, 6, 1.8, 0.6]; targetZoom = zooms[level]; } window.zoomToLevel = zoomToLevel;
+        document.getElementById('zoomSlider').addEventListener('input', (e) => { targetZoom = Math.pow(10, parseFloat(e.target.value)); });
+        document.getElementById('u4Slider').addEventListener('input', (e) => { u4Position = parseFloat(e.target.value); });
+        document.getElementById('u3Slider').addEventListener('input', (e) => { u3Position = parseFloat(e.target.value); });
+        document.getElementById('showAllLevels').addEventListener('change', (e) => { showAllLevels = e.target.checked; });
+        document.getElementById('highlightTube').addEventListener('change', (e) => { highlightTube = e.target.checked; });
+        document.getElementById('animateRotation').addEventListener('change', (e) => { autoRotate = e.target.checked; });
+        let isDragging = false, lastX, lastY;
+        canvas.addEventListener('mousedown', (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; });
+        canvas.addEventListener('mousemove', (e) => { if (isDragging) { rotationY += (e.clientX - lastX) * 0.005; rotationX += (e.clientY - lastY) * 0.005; lastX = e.clientX; lastY = e.clientY; } });
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+        canvas.addEventListener('wheel', (e) => { e.preventDefault(); const factor = e.deltaY > 0 ? 0.9 : 1.1; targetZoom = Math.max(0.3, Math.min(100, targetZoom * factor)); });
+        canvas.addEventListener('touchstart', (e) => { if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; } });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if (e.touches.length === 1 && isDragging) { rotationY += (e.touches[0].clientX - lastX) * 0.005; rotationX += (e.touches[0].clientY - lastY) * 0.005; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; } });
+        canvas.addEventListener('touchend', () => isDragging = false);
+        animate();
+    </script>
+</body>
+</html>
