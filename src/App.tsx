@@ -24,10 +24,10 @@ function Gallery() {
     fetchArtifacts()
   }, [])
 
-  const categories = [...new Set(artifacts.map(a => a.category))]
+  const categories = [...new Set(artifacts.map(a => a.category).filter(c => c !== 'uncategorized'))]
   const filteredArtifacts = filter 
     ? artifacts.filter(a => a.category === filter)
-    : artifacts
+    : artifacts.filter(a => a.category !== 'uncategorized')
 
   // Group by parent for display
   const standalone = filteredArtifacts.filter(a => !a.parent_id && a.artifact_type !== 'companion')
@@ -38,6 +38,13 @@ function Gallery() {
         <div className="text-xl text-gray-400">Loading...</div>
       </div>
     )
+  }
+
+  // Convert embed URL to viewable URL
+  const getViewUrl = (embedUrl: string | null) => {
+    if (!embedUrl) return null
+    // https://claude.site/public/artifacts/xxx/embed -> https://claude.ai/public/artifacts/xxx
+    return embedUrl.replace('claude.site', 'claude.ai').replace('/embed', '')
   }
 
   return (
@@ -91,14 +98,20 @@ function Gallery() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {standalone.map((artifact) => {
             const companions = filteredArtifacts.filter(a => a.parent_id === artifact.id)
+            const viewUrl = getViewUrl(artifact.embed_url)
+            
             return (
-              <Link
+              <a
                 key={artifact.id}
-                to={`/artifacts/${artifact.slug}`}
-                className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-purple-500"
+                href={viewUrl || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors border border-gray-700 hover:border-purple-500 group"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-white">{artifact.title}</h3>
+                  <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
+                    {artifact.title}
+                  </h3>
                   <div className="flex items-center gap-2">
                     {artifact.featured && (
                       <span className="text-yellow-400">★</span>
@@ -106,10 +119,14 @@ function Gallery() {
                     {artifact.artifact_type === 'slideshow' && (
                       <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">slides</span>
                     )}
+                    {artifact.artifact_type === 'visualization' && (
+                      <span className="text-xs bg-green-900/50 text-green-300 px-2 py-1 rounded">interactive</span>
+                    )}
+                    <span className="text-gray-500 group-hover:text-purple-400 transition-colors">↗</span>
                   </div>
                 </div>
                 {artifact.description && (
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
                     {artifact.description}
                   </p>
                 )}
@@ -135,21 +152,26 @@ function Gallery() {
                     </div>
                   </div>
                 )}
-              </Link>
+              </a>
             )
           })}
         </div>
       )}
+      
+      <footer className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-800 text-center">
+        <p className="text-gray-500 text-sm">
+          Artifacts open in Claude.ai
+        </p>
+      </footer>
     </div>
   )
 }
 
+// Keep the detail view for future use but redirect to external for now
 function ArtifactView() {
   const { slug } = useParams<{ slug: string }>()
   const [artifact, setArtifact] = useState<Artifact | null>(null)
-  const [companions, setCompanions] = useState<Artifact[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeCompanion, setActiveCompanion] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchArtifact() {
@@ -163,16 +185,10 @@ function ArtifactView() {
         console.error('Error fetching artifact:', error)
       } else {
         setArtifact(data)
-        
-        // Fetch companions if this is a parent
-        if (data) {
-          const { data: companionData } = await supabase
-            .from('artifacts')
-            .select('*')
-            .eq('parent_id', data.id)
-            .order('display_order', { ascending: true })
-          
-          setCompanions(companionData || [])
+        // Redirect to Claude
+        if (data?.embed_url) {
+          const viewUrl = data.embed_url.replace('claude.site', 'claude.ai').replace('/embed', '')
+          window.location.href = viewUrl
         }
       }
       setLoading(false)
@@ -183,7 +199,7 @@ function ArtifactView() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-xl text-gray-400">Loading...</div>
+        <div className="text-xl text-gray-400">Redirecting to Claude.ai...</div>
       </div>
     )
   }
@@ -203,86 +219,9 @@ function ArtifactView() {
     )
   }
 
-  const displayUrl = activeCompanion 
-    ? companions.find(c => c.id === activeCompanion)?.embed_url 
-    : artifact.embed_url
-
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-900">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/" className="text-purple-400 hover:text-purple-300">
-            ← Back
-          </Link>
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl md:text-2xl font-bold text-white">{artifact.title}</h1>
-            {artifact.featured && <span className="text-yellow-400">★</span>}
-          </div>
-          <div className="w-16" /> {/* spacer */}
-        </div>
-
-        {companions.length > 0 && (
-          <div className="mb-4 flex gap-2 flex-wrap">
-            <button
-              onClick={() => setActiveCompanion(null)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeCompanion === null
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
-            >
-              {artifact.title}
-            </button>
-            {companions.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setActiveCompanion(c.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeCompanion === c.id
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                }`}
-              >
-                {c.title}
-              </button>
-            ))}
-          </div>
-        )}
-        
-        {displayUrl ? (
-          <div className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
-            <iframe
-              src={displayUrl}
-              title={artifact.title}
-              className="w-full h-[80vh]"
-              frameBorder="0"
-              allow="clipboard-write"
-              allowFullScreen
-            />
-          </div>
-        ) : (
-          <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 text-center">
-            <p className="text-gray-400">No embed URL configured for this artifact.</p>
-          </div>
-        )}
-
-        {artifact.description && (
-          <div className="mt-6 p-4 bg-gray-800/50 rounded-lg">
-            <p className="text-gray-300">{artifact.description}</p>
-          </div>
-        )}
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="px-3 py-1 bg-purple-900/50 text-purple-300 text-sm rounded">
-            {artifact.category}
-          </span>
-          {artifact.tags?.map((tag) => (
-            <span key={tag} className="px-3 py-1 bg-gray-700 text-gray-300 text-sm rounded">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="text-xl text-gray-400">Redirecting to Claude.ai...</div>
     </div>
   )
 }
