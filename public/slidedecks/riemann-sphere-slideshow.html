@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riemann Sphere: XQ Mathematics Visualizations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0a1a;
+      color: #ffffff;
+      overflow: hidden;
+    }
+    
+    .slideshow {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+    
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #ffd700, #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    h2 {
+      font-size: 2.2em;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #4d96ff;
+    }
+    
+    .subtitle {
+      font-size: 1.3em;
+      color: #888;
+      margin-bottom: 40px;
+      text-align: center;
+      max-width: 800px;
+    }
+    
+    .content {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      max-width: 1200px;
+    }
+    
+    .diagram {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .description {
+      flex: 1;
+      font-size: 1.1em;
+      line-height: 1.8;
+    }
+    
+    .description ul {
+      list-style: none;
+      margin: 20px 0;
+    }
+    
+    .description li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+    
+    .description li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #ffd700;
+    }
+    
+    .artifact-link {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #4d96ff, #6bcb77);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .artifact-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(77, 150, 255, 0.3);
+    }
+    
+    /* SVG Diagrams */
+    .sphere-diagram {
+      width: 350px;
+      height: 350px;
+    }
+    
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 100;
+    }
+    
+    .nav-btn {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #444;
+      background: rgba(20, 20, 40, 0.8);
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn:hover {
+      border-color: #ffd700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+    
+    .slide-counter {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      font-size: 1em;
+      color: #666;
+    }
+    
+    /* Quadrant colors */
+    .q1 { color: #ff6b6b; }
+    .q2 { color: #ffd93d; }
+    .q3 { color: #6bcb77; }
+    .q4 { color: #4d96ff; }
+    
+    .highlight { color: #ffd700; }
+    
+    /* Key insight box */
+    .insight {
+      background: rgba(255, 215, 0, 0.1);
+      border-left: 4px solid #ffd700;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .insight-title {
+      color: #ffd700;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    /* Equation display */
+    .equation {
+      font-family: 'Times New Roman', serif;
+      font-size: 1.8em;
+      text-align: center;
+      margin: 30px 0;
+      color: #ffd700;
+    }
+    
+    .equation sup {
+      font-size: 0.7em;
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow">
+    
+    <!-- Slide 1: Title -->
+    <div class="slide active" id="slide1">
+      <h1>Riemann Sphere</h1>
+      <p class="subtitle">XQ Mathematics for Psycho-Social Dynamics</p>
+      <svg class="sphere-diagram" viewBox="0 0 200 200">
+        <!-- Sphere outline -->
+        <ellipse cx="100" cy="100" rx="80" ry="80" fill="none" stroke="#334" stroke-width="1"/>
+        <!-- Equator -->
+        <ellipse cx="100" cy="100" rx="80" ry="20" fill="none" stroke="#ffd700" stroke-width="2"/>
+        <!-- Vertical meridian -->
+        <ellipse cx="100" cy="100" rx="20" ry="80" fill="none" stroke="#446" stroke-width="1"/>
+        <!-- Poles -->
+        <circle cx="100" cy="20" r="6" fill="#ff4a4a"/>
+        <text x="100" y="12" text-anchor="middle" fill="#ff4a4a" font-size="10">∞</text>
+        <circle cx="100" cy="180" r="6" fill="#4a9eff"/>
+        <text x="100" y="195" text-anchor="middle" fill="#4a9eff" font-size="10">0</text>
+        <!-- Points on equator -->
+        <circle cx="180" cy="100" r="5" fill="#44ff44"/>
+        <circle cx="20" cy="100" r="5" fill="#ffd700"/>
+        <circle cx="100" cy="80" r="5" fill="#ff44ff"/>
+        <!-- Labels -->
+        <text x="188" y="104" fill="#44ff44" font-size="10">1</text>
+        <text x="5" y="104" fill="#ffd700" font-size="10">-1</text>
+      </svg>
+      <p style="color: #666; margin-top: 40px;">Use arrow keys or buttons to navigate</p>
+    </div>
+    
+    <!-- Slide 2: The Core Insight -->
+    <div class="slide" id="slide2">
+      <h2>The Core Mathematical Insight</h2>
+      <div class="equation">x<sup>0</sup> = 1 for all x</div>
+      <div class="content" style="flex-direction: column; gap: 30px;">
+        <div class="insight" style="max-width: 700px;">
+          <div class="insight-title">At the Equator (pscale 0)</div>
+          <p>Everyone meets as <span class="highlight">1</span>. The shared moment where n individuals exist as 1<sup>n</sup>.</p>
+        </div>
+        <div style="display: flex; gap: 40px; text-align: center;">
+          <div>
+            <div style="font-size: 1.5em; color: #ff6b6b;">Below Equator</div>
+            <div style="color: #888;">Negative pscale</div>
+            <div style="margin-top: 10px;">Individual processing</div>
+            <div style="color: #666;">Q4 → Q3 → Q2 → Q1</div>
+            <div style="color: #666;">toward embodied 0</div>
+          </div>
+          <div style="font-size: 3em; color: #ffd700;">⬌</div>
+          <div>
+            <div style="font-size: 1.5em; color: #4d96ff;">Above Equator</div>
+            <div style="color: #888;">Positive pscale</div>
+            <div style="margin-top: 10px;">Social projection</div>
+            <div style="color: #666;">minutes → years → life</div>
+            <div style="color: #666;">toward unbounded ∞</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 3: Psycho-Social Dynamics -->
+    <div class="slide" id="slide3">
+      <h2>Visualization 1: Psycho-Social Dynamics</h2>
+      <div class="content">
+        <div class="diagram">
+          <svg class="sphere-diagram" viewBox="0 0 200 200">
+            <defs>
+              <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L9,3 z" fill="#44ff44"/>
+              </marker>
+            </defs>
+            <!-- Sphere -->
+            <ellipse cx="100" cy="100" rx="80" ry="80" fill="none" stroke="#334" stroke-width="1"/>
+            <!-- Equator highlighted -->
+            <ellipse cx="100" cy="100" rx="80" ry="20" fill="none" stroke="#ffd700" stroke-width="3"/>
+            <!-- Ideal positions (ghosted) -->
+            <circle cx="180" cy="100" r="6" fill="none" stroke="#44ff44" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <circle cx="100" cy="80" r="6" fill="none" stroke="#44ff44" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <circle cx="20" cy="100" r="6" fill="none" stroke="#44ff44" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <circle cx="100" cy="120" r="6" fill="none" stroke="#44ff44" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+            <!-- Current positions with connections -->
+            <polygon points="170,95 120,82 50,95 30,105 80,118 130,110" 
+                     fill="none" stroke="#ff6666" stroke-width="2" opacity="0.6"/>
+            <!-- Movement arrows (curved, showing direction toward ideal) -->
+            <path d="M170,95 Q175,97 178,100" stroke="#44ff44" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+            <path d="M120,82 Q110,80 102,80" stroke="#44ff44" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+            <path d="M50,95 Q35,97 25,100" stroke="#44ff44" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+            <path d="M80,118 Q90,120 98,120" stroke="#44ff44" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+            <!-- Points (current positions) -->
+            <circle cx="170" cy="95" r="8" fill="#ff6666"/>
+            <circle cx="120" cy="82" r="8" fill="#ff6666"/>
+            <circle cx="50" cy="95" r="8" fill="#ff6666"/>
+            <circle cx="30" cy="105" r="8" fill="#ff6666"/>
+            <circle cx="80" cy="118" r="8" fill="#ff6666"/>
+            <circle cx="130" cy="110" r="8" fill="#ff6666"/>
+            <!-- Label -->
+            <text x="100" y="150" text-anchor="middle" fill="#ffd700" font-size="11">Self-Organization at Equator</text>
+            <text x="100" y="165" text-anchor="middle" fill="#44ff44" font-size="9">→ movement toward ideal</text>
+          </svg>
+        </div>
+        <div class="description">
+          <p><strong>Focus:</strong> Movement around the equator</p>
+          <ul>
+            <li><strong>Neighbours:</strong> Local equalization, ripple propagation</li>
+            <li><strong>Angle (π/n):</strong> Third-party observation with feedback</li>
+            <li><strong>Solo:</strong> Hierarchical authority as fixed reference</li>
+            <li><strong>Fine-tuning:</strong> Anchor to x = 1 position</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-title">Key Insight</div>
+            <p>Different organization methods produce different pathologies: clumping, warping, fragility.</p>
+          </div>
+          <a href="https://claude.ai/public/artifacts/410730df-100a-4a16-b816-4cf7f2875e42" 
+             target="_blank" class="artifact-link">
+            ▶ Open Interactive Visualization
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 4: Pscale Purpose Trees -->
+    <div class="slide" id="slide4">
+      <h2>Visualization 2: Pscale Purpose Trees</h2>
+      <div class="content">
+        <div class="diagram">
+          <svg class="sphere-diagram" viewBox="0 0 200 220">
+            <!-- Pscale labels -->
+            <text x="10" y="25" fill="#666" font-size="8">+10 (life)</text>
+            <text x="10" y="55" fill="#666" font-size="8">+5 (year)</text>
+            <text x="10" y="100" fill="#ffd700" font-size="9" font-weight="bold">0 (moment)</text>
+            <text x="10" y="145" fill="#666" font-size="8">-3 (Q4)</text>
+            <text x="10" y="165" fill="#666" font-size="8">-5 (Q2)</text>
+            <text x="10" y="185" fill="#666" font-size="8">-6 (Q1)</text>
+            
+            <!-- Sphere outline -->
+            <ellipse cx="120" cy="100" rx="60" ry="60" fill="none" stroke="#334" stroke-width="1"/>
+            <!-- Latitude lines -->
+            <ellipse cx="120" cy="40" rx="45" ry="10" fill="none" stroke="#446" stroke-width="0.5"/>
+            <ellipse cx="120" cy="70" rx="55" ry="12" fill="none" stroke="#446" stroke-width="0.5"/>
+            <ellipse cx="120" cy="100" rx="60" ry="15" fill="none" stroke="#ffd700" stroke-width="2"/>
+            <ellipse cx="120" cy="130" rx="55" ry="12" fill="none" stroke="#446" stroke-width="0.5"/>
+            <ellipse cx="120" cy="160" rx="45" ry="10" fill="none" stroke="#446" stroke-width="0.5"/>
+            
+            <!-- Meridian arcs (people) -->
+            <!-- Person 1 -->
+            <path d="M180,100 Q175,60 160,30 M180,100 Q175,140 160,170" 
+                  fill="none" stroke="#ff8866" stroke-width="1.5"/>
+            <circle cx="180" cy="100" r="6" fill="#ffaa44"/>
+            <circle cx="175" cy="70" r="3" fill="#4d96ff"/>
+            <circle cx="172" cy="130" r="3" fill="#ffd93d"/>
+            <circle cx="165" cy="155" r="3" fill="#ff6b6b"/>
+            
+            <!-- Person 2 -->
+            <path d="M120,85 Q115,50 110,25 M120,85 Q115,130 110,165" 
+                  fill="none" stroke="#ff8866" stroke-width="1.5"/>
+            <circle cx="120" cy="85" r="6" fill="#ffaa44"/>
+            <circle cx="117" cy="55" r="3" fill="#6bcb77"/>
+            <circle cx="115" cy="135" r="3" fill="#ffd93d"/>
+            
+            <!-- Person 3 -->
+            <path d="M60,100 Q65,60 70,30 M60,100 Q65,140 70,170" 
+                  fill="none" stroke="#ff8866" stroke-width="1.5"/>
+            <circle cx="60" cy="100" r="6" fill="#ffaa44"/>
+            <circle cx="65" cy="65" r="3" fill="#4d96ff"/>
+            <circle cx="68" cy="145" r="3" fill="#6bcb77"/>
+            
+            <!-- Legend -->
+            <circle cx="60" cy="205" r="4" fill="#ff6b6b"/>
+            <text x="68" y="208" fill="#888" font-size="8">Q1</text>
+            <circle cx="90" cy="205" r="4" fill="#ffd93d"/>
+            <text x="98" y="208" fill="#888" font-size="8">Q2</text>
+            <circle cx="120" cy="205" r="4" fill="#6bcb77"/>
+            <text x="128" y="208" fill="#888" font-size="8">Q3</text>
+            <circle cx="150" cy="205" r="4" fill="#4d96ff"/>
+            <text x="158" y="208" fill="#888" font-size="8">Q4</text>
+          </svg>
+        </div>
+        <div class="description">
+          <p><strong>Focus:</strong> Vertical dimension — individual arcs from 0 to ∞</p>
+          <ul>
+            <li>Each person: meridian from embodied (0) through moment to projection (∞)</li>
+            <li>Negative pscales: <span class="q1">Q1</span> <span class="q2">Q2</span> <span class="q3">Q3</span> <span class="q4">Q4</span> internal processing</li>
+            <li>Positive pscales: social projection (minutes → lifetime)</li>
+            <li>Purpose segments with semantic content at each level</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-title">Key Insight</div>
+            <p>Only Q1 (sensation) is physically embodied. Q2-Q4 are increasingly "imaginary" — temporal constructs without physical substrate.</p>
+          </div>
+          <a href="https://claude.ai/public/artifacts/cb751b85-aa52-456b-bebd-0dc32fe27bd9" 
+             target="_blank" class="artifact-link">
+            ▶ Open Interactive Visualization
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Slide 5: Synthesis -->
+    <div class="slide" id="slide5">
+      <h2>Toward Synthesis</h2>
+      <div class="content" style="flex-direction: column; max-width: 900px;">
+        <div style="display: flex; gap: 40px; margin-bottom: 40px;">
+          <div style="flex: 1; text-align: center; padding: 20px; border: 1px solid #446; border-radius: 10px;">
+            <div style="font-size: 1.3em; color: #ff6666; margin-bottom: 10px;">Horizontal</div>
+            <div style="color: #888;">Movement around equator</div>
+            <div style="margin-top: 10px;">Self-organization dynamics</div>
+            <div style="color: #666; font-size: 0.9em;">Geometric methods</div>
+          </div>
+          <div style="font-size: 2em; align-self: center;">+</div>
+          <div style="flex: 1; text-align: center; padding: 20px; border: 1px solid #446; border-radius: 10px;">
+            <div style="font-size: 1.3em; color: #4d96ff; margin-bottom: 10px;">Vertical</div>
+            <div style="color: #888;">Purpose trees along meridians</div>
+            <div style="margin-top: 10px;">Pscale structure</div>
+            <div style="color: #666; font-size: 0.9em;">Semantic content</div>
+          </div>
+          <div style="font-size: 2em; align-self: center;">=</div>
+          <div style="flex: 1; text-align: center; padding: 20px; border: 2px solid #ffd700; border-radius: 10px; background: rgba(255,215,0,0.05);">
+            <div style="font-size: 1.3em; color: #ffd700; margin-bottom: 10px;">Integrated</div>
+            <div style="color: #888;">Purpose resonance drives movement</div>
+            <div style="margin-top: 10px;">Semantic self-organization</div>
+            <div style="color: #666; font-size: 0.9em;">XQ mathematics</div>
+          </div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">Next Step</div>
+          <p>Instead of geometric methods (Neighbours, Angle), attraction/repulsion emerges from <strong>semantic alignment of purposes</strong> at the currently active pscale level. People move toward those with resonant purposes, away from those with conflicting purposes.</p>
+        </div>
+        <p style="color: #666; margin-top: 20px; text-align: center;">
+          The mathematics doesn't calculate the social. It reflects it.<br/>
+          And in reflecting, offers leverage for transformation.
+        </p>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- Navigation -->
+  <div class="nav">
+    <button class="nav-btn" onclick="prevSlide()">←</button>
+    <button class="nav-btn" onclick="nextSlide()">→</button>
+  </div>
+  
+  <div class="slide-counter">
+    <span id="currentSlide">1</span> / <span id="totalSlides">5</span>
+  </div>
+  
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 5;
+    
+    function showSlide(n) {
+      // Wrap around
+      if (n > totalSlides) n = 1;
+      if (n < 1) n = totalSlides;
+      
+      // Hide all slides
+      document.querySelectorAll('.slide').forEach(slide => {
+        slide.classList.remove('active');
+      });
+      
+      // Show current slide
+      document.getElementById('slide' + n).classList.add('active');
+      document.getElementById('currentSlide').textContent = n;
+      
+      currentSlide = n;
+    }
+    
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+    
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+    
+    // Initialize
+    document.getElementById('totalSlides').textContent = totalSlides;
+  </script>
+</body>
+</html>
