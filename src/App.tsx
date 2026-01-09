@@ -7,6 +7,7 @@ import RiemannDynamics from './pages/RiemannDynamics'
 import RiemannPurpose from './pages/RiemannPurpose'
 import RiemannSlideshow from './pages/RiemannSlideshow'
 import TorusSlideshow from './pages/TorusSlideshow'
+import FourFoldSlideshow from './pages/FourFoldSlideshow'
 import NestedTori from './pages/NestedTori'
 import TorusInteractive from './pages/TorusInteractive'
 import XiTransition from './pages/XiTransition'
@@ -74,6 +75,14 @@ function Gallery() {
       path: '/slidedecks/torus',
       category: 'torus',
       tags: ['q-moment', 'consciousness', 'phase-model']
+    },
+    {
+      id: '4fold-slideshow',
+      title: '4-Fold Structure',
+      description: 'Quaternionic mathematics for psycho-social reality. Nested tori, spiral generators, EM field cascades, and Möbius closure — the deep structure of cognitive rotation.',
+      path: '/slidedecks/4fold',
+      category: '4-fold',
+      tags: ['quaternions', 'nested-tori', 'em-fields']
     }
   ]
 
@@ -389,6 +398,7 @@ export default function App() {
       {/* Slideshow routes */}
       <Route path="/slidedecks/riemann" element={<RiemannSlideshow />} />
       <Route path="/slidedecks/torus" element={<TorusSlideshow />} />
+      <Route path="/slidedecks/4fold" element={<FourFoldSlideshow />} />
       
       {/* Visualization routes */}
       <Route path="/viz/riemann-dynamics" element={<RiemannDynamics />} />
